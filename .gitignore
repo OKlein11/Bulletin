@@ -172,3 +172,5 @@ cython_debug/
 
 
 tests/auth.py
+
+.DS_Store
