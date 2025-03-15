@@ -1,0 +1,4 @@
+<b>{{data.title}}</b><br>
+{% for item in data["items"]%}
+    <a href="{{item['href']}}">{{item['title']}}</a><br>
+{% endfor %}
