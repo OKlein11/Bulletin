@@ -1,6 +1,6 @@
 [project]
 name = "Bulletin"
-dynamic = ["version"]
+version = "1.0.2"
 description = "A python framework for generating newsletters"
 dependencies = [
     "feedparser",
