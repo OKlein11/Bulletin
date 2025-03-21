@@ -1,5 +1,8 @@
 import pytest
 import smtplib
+import os
+import feedparser
+
 
 class MockSmtp:
 
@@ -35,5 +38,17 @@ def mock_get_smtp_server(monkeypatch):
 
 
 @pytest.fixture
-def test_process_function(config):
-    return {"test":"example"}
+def mock_feedparser_parse(monkeypatch:pytest.MonkeyPatch):
+
+    def mock_feed_get(link:str, *args):
+
+        name:str = link.split("//")[1].split(".")[0]
+        with open(os.path.join("data",f"{name}.txt")) as f:
+            return bytes(f.read(), encoding="utf-8")
+        
+
+    monkeypatch.chdir("tests")
+    monkeypatch.setattr(feedparser.http,"get",mock_feed_get)
+
+def mock_process_function(config):
+    return {"test":"test"}

@@ -1,10 +1,9 @@
+import dateutil
 import jinja2
 import inspect
 import os
 from typing import Callable
 import feedparser
-import datetime
-from time import mktime
 
 DEFAULT_TEMPLATE_FOLDER = "templates"
 
@@ -78,7 +77,7 @@ class IndividualRSSFeed(Section):
         for item in range(items):
             i = {}
             i["href"] = parsed_feed.entries[item].link
-            i["pub_date"] = datetime.datetime.fromtimestamp(mktime((parsed_feed.entries[item].published_parsed)))
+            i["pub_date"] = dateutil.parser.parse(parsed_feed.entries[item].published)
             i["title"] = parsed_feed.entries[item].title
             data["items"].append(i)
         return data

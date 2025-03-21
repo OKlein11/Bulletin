@@ -4,8 +4,8 @@
 
 </head>
 <body>
-{% for item in content %}
-    <div>{{item}}</div>
-{% endfor %}
+
+    <div>{'test': 'test'}</div>
+
 </body>
 </html>
