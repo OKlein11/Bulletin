@@ -5,6 +5,7 @@ import os
 from typing import Callable
 import feedparser
 from .helpers import get_template
+import markdown
 
 DEFAULT_TEMPLATE_FOLDER = "templates"
 
@@ -70,3 +71,26 @@ class IndividualRSSFeed(Section):
             i["title"] = parsed_feed.entries[item].title
             data["items"].append(i)
         return data
+    
+class PlainTextSection(Section):
+    default_template = "plain_text_section.html"
+    def __init__(self, 
+                 text:str,
+                 encoding:str="html", 
+                 config={}, 
+                 template = None, 
+                 template_folder = DEFAULT_TEMPLATE_FOLDER):
+        config["text"] = text
+        config["encoding"] = encoding
+        super().__init__(
+                        process_function=self._process_plain_text, 
+                        config=config, 
+                        template=template, 
+                        template_folder=template_folder)
+    
+    @staticmethod
+    def _process_plain_text(config) -> str:
+        if config["encoding"] == "html":
+            return config["text"]
+        elif config["encoding"] == "markdown":
+            return markdown.markdown(config["text"])
