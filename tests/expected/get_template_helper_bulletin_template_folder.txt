@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+<body>
+Test 2
+
+    <div>{'test': 'test'}</div>
+
+</body>
+</html>
