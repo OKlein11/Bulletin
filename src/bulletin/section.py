@@ -4,6 +4,7 @@ import inspect
 import os
 from typing import Callable
 import feedparser
+from .helpers import get_template
 
 DEFAULT_TEMPLATE_FOLDER = "templates"
 
@@ -31,19 +32,7 @@ class Section:
     def render(self):
         data = self._process()
 
-        if hasattr(self,"template"):
-            template = self.template
-            folder = self.template_folder
-        else:
-            template = self.__class__.default_template
-            folder = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), "templates")
-
-
-        template_loader = jinja2.FileSystemLoader(searchpath= folder)
-
-
-        template_env = jinja2.Environment(loader=template_loader)
-        template = template_env.get_template(template)
+        template = get_template(self)
         return template.render(data=data)
     
     

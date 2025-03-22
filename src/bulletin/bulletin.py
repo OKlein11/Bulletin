@@ -4,6 +4,7 @@ from typing import Sequence
 import jinja2
 import os
 import inspect
+from .helpers import get_template
 
 DEFAULT_TEMPLATE_FOLDER = "templates"
 
@@ -29,19 +30,7 @@ class Bulletin:
 
     def render(self):
         renders = [section.render() for section in self.sections]
-        if hasattr(self,"template"):
-            template = self.template
-            folder = self.template_folder
-        else:
-            template = self.__class__.default_template
-            folder = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), "templates")
-
-
-        template_loader = jinja2.FileSystemLoader(searchpath= folder)
-
-
-        template_env = jinja2.Environment(loader=template_loader)
-        template = template_env.get_template(template)
+        template = get_template(self)
         return template.render(content = renders)
 
 
