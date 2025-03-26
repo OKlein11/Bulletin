@@ -77,18 +77,20 @@ class RequestsGetSection(Section):
                  url:str,
                  headers:str={},
                  return_type:str="json",
+                 params:dict = {},
                  config={}, 
                  template = None, 
                  template_folder = DEFAULT_TEMPLATE_FOLDER):
         config["url"] = url
         config["headers"] = headers
         config["return_type"] = return_type
+        config["params"] = params
         super().__init__(self._process_request_get, config, template, template_folder)
 
     @staticmethod
     def _process_request_get(config:dict) -> dict | str:
         url = config["url"]
-        req = requests.get(url, headers=config["headers"])
+        req = requests.get(url, headers=config["headers"],params=config["params"])
         try:
             assert req.status_code == 200
         except AssertionError as e:

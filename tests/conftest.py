@@ -59,7 +59,7 @@ def mock_process_function(config):
 
 
 class mock_request:
-    def __init__(self,url,headers):
+    def __init__(self,url,headers,params):
         self.name = url.split("//")[1].split(".")[0]
 
     def json(self) -> dict:
@@ -75,7 +75,7 @@ class mock_request:
         
 @pytest.fixture
 def mock_request_get(monkeypatch):
-    def mock_get(url,headers):
-        return mock_request(url,headers)
+    def mock_get(url,headers,params):
+        return mock_request(url,headers,params)
     
     monkeypatch.setattr(requests,"get",mock_get)
