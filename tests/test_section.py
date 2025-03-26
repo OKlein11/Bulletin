@@ -33,7 +33,10 @@ def test_section_process(kwargs:dict,
         request.getfixturevalue(fixture)
     section = section_class(**kwargs)
     with open(os.path.join("expected",expected)) as f:
-        x = json.load(f)
+        if expected.split(".")[1] == "json":
+            x = json.load(f)
+        else:
+            x = f.read()
     assert x == section._process()
 
 
