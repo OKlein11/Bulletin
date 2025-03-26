@@ -10,7 +10,7 @@ from conftest import mock_process_function
 @pytest.mark.parametrize(("section_class","kwargs","expected"),[
     (Section,{"process_function":mock_process_function},{"config":{},"template_folder":"templates","default_template":"section.html"}),
     (IndividualRSSFeed,{"url":"http://test.com/feed"},{"config":{"items":5,"since_last":False,"url":"http://test.com/feed"},"default_template":"individual_rss.html"}),
-    (RequestsGetSection,{"url":"http://request_get_section_init.com/test"},{"config":{"url":"http://request_get_section_init.com/test","headers":{},"return_type":"json"},"default_template":"section.html"}),
+    (RequestsGetSection,{"url":"http://request_get_section_init.com/test"},{"config":{"url":"http://request_get_section_init.com/test","headers":{},"return_type":"json","params":{}},"default_template":"section.html"}),
     (PlainTextSection,{"text":"test"},{"config":{"text":"test","encoding":"html"},"default_template":"plain_text_section.html"}),
 ])
 def test_section_init(section_class:Section,kwargs:dict,expected:dict):
