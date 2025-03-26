@@ -1,9 +1,6 @@
 from .section import Section
 from .email_server import EmailServer
 from typing import Sequence
-import jinja2
-import os
-import inspect
 from .helpers import get_template
 
 DEFAULT_TEMPLATE_FOLDER = "templates"
