@@ -10,7 +10,8 @@ from conftest import mock_process_function
 @pytest.mark.parametrize(("section_class","kwargs","expected"),[
     (Section,{"process_function":mock_process_function},{"config":{},"template_folder":"templates","default_template":"section.html"}),
     (IndividualRSSFeed,{"url":"http://test.com/feed"},{"config":{"items":5,"since_last":False,"url":"http://test.com/feed"},"default_template":"individual_rss.html"}),
-    (RequestsGetSection,{"url":"http://request_get_section_init.com/test"},{"config":{"url":"http://request_get_section_init.com/test","headers":{},"return_type":"json"},"default_template":"section.html"})
+    (RequestsGetSection,{"url":"http://request_get_section_init.com/test"},{"config":{"url":"http://request_get_section_init.com/test","headers":{},"return_type":"json"},"default_template":"section.html"}),
+    (PlainTextSection,{"text":"test"},{"config":{"text":"test","encoding":"html"},"default_template":"plain_text_section.html"}),
 ])
 def test_section_init(section_class:Section,kwargs:dict,expected:dict):
     section = section_class(**kwargs)
@@ -20,9 +21,13 @@ def test_section_init(section_class:Section,kwargs:dict,expected:dict):
         assert not(hasattr(section,"template"))
 
 
+
 @pytest.mark.parametrize(("kwargs","section_class","fixtures","expected",),[
      ({"process_function":mock_process_function},Section,[],"section_process.json"),
-     ({"url":"http://request_get_section_process.com/test"},RequestsGetSection,["mock_request_get"],"request_get_section_process.json")
+     ({"url":"http://request_get_section_process.com/test"},RequestsGetSection,["mock_request_get"],"request_get_section_process.json"),
+     ({"text":"test"},PlainTextSection,[],"plain_text_section_process.txt"),
+     ({"text":"**test**","encoding":"markdown"},PlainTextSection,[],"plain_text_section_process_markdown.txt"),
+
 ])
 def test_section_process(kwargs:dict,
                          section_class:Section,
@@ -32,6 +37,7 @@ def test_section_process(kwargs:dict,
     for fixture in fixtures:
         request.getfixturevalue(fixture)
     section = section_class(**kwargs)
+
     with open(os.path.join("expected",expected)) as f:
         if expected.split(".")[1] == "json":
             x = json.load(f)
@@ -39,14 +45,16 @@ def test_section_process(kwargs:dict,
             x = f.read()
     assert x == section._process()
 
-
+    
 @pytest.mark.parametrize(("template","template_folder","kwargs","section_class","fixtures","expected"),[
                           (None,None,{"process_function":mock_process_function},Section,[],"section_render_default.txt"),
                           ("section.html",None,{"process_function":mock_process_function},Section,[],"section_render_template.txt"),
                           ("section.html","templates_2",{"process_function":mock_process_function},Section,[],"section_render_template_folder.txt"),
                           (None,"templates_2",{"process_function":mock_process_function},Section,[],"section_render_default.txt"),
                           (None,None,{"url":"http://test_individual_rss.com/feed"},IndividualRSSFeed,["mock_feedparser_parse"],"individual_rss_render_default.txt"),
-                          (None,None,{"url":"http://request_get_section_render.com/test"},RequestsGetSection,["mock_request_get"],"request_get_section_render.txt")
+                          (None,None,{"url":"http://request_get_section_render.com/test"},RequestsGetSection,["mock_request_get"],"request_get_section_render.txt"),
+                          (None,None,{"text":"test"},PlainTextSection,[],"plain_text_section_render.txt"),
+                          (None,None,{"text":"**test**","encoding":"markdown"},PlainTextSection,[],"plain_text_section_render_markdown.txt"),
                          ])
 # Tests the render function. Should be anonymized to work with any Section subclass
 # template and template folder are passed to the Section.__init__ function as such. kwargs is any additional args that need to be passed. Section class is the actual class. expected is a file name in the tests/expected directory with the expected text

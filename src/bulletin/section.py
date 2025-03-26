@@ -3,6 +3,7 @@ import requests
 from typing import Callable
 import feedparser
 from .helpers import get_template
+import markdown
 
 
 DEFAULT_TEMPLATE_FOLDER = "templates"
@@ -70,6 +71,7 @@ class IndividualRSSFeed(Section):
             data["items"].append(i)
         return data
 
+
 class RequestsGetSection(Section):
     def __init__(self,
                  url:str,
@@ -95,3 +97,28 @@ class RequestsGetSection(Section):
             return req.json()
         elif config["return_type"] == "text":
             return req.content.decode()
+
+    
+class PlainTextSection(Section):
+    default_template = "plain_text_section.html"
+    def __init__(self, 
+                 text:str,
+                 encoding:str="html", 
+                 config={}, 
+                 template = None, 
+                 template_folder = DEFAULT_TEMPLATE_FOLDER):
+        config["text"] = text
+        config["encoding"] = encoding
+        super().__init__(
+                        process_function=self._process_plain_text, 
+                        config=config, 
+                        template=template, 
+                        template_folder=template_folder)
+    
+    @staticmethod
+    def _process_plain_text(config) -> str:
+        if config["encoding"] == "html":
+            return config["text"]
+        elif config["encoding"] == "markdown":
+            return markdown.markdown(config["text"])
+
