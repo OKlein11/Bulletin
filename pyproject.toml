@@ -5,7 +5,9 @@ description = "A python framework for generating newsletters"
 dependencies = [
     "feedparser",
     "markdown",
-    "Jinja2"
+    "Jinja2",
+    "python-dateutil",
+    "requests"
 ]
 
 
