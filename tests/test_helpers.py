@@ -16,7 +16,6 @@ def test_get_template_helper_section(template,template_folder,kwargs,expected,mo
     for k,v in {"template":template,"template_folder":template_folder}.items():
         if v is not None:
             kwargs[k] = v
-    monkeypatch.chdir("tests")
     with open(os.path.join("expected",expected)) as f:
         expect = f.read()
     sect = Section(mock_process_function,**kwargs)
@@ -35,7 +34,6 @@ def test_get_template_helper_bulletin(template,template_folder,kwargs,expected,m
     for k,v in {"template":template,"template_folder":template_folder}.items():
         if v is not None:
             kwargs[k] = v
-    monkeypatch.chdir("tests")
     with open(os.path.join("expected",expected)) as f:
         expect = f.read()
     sect = Section(mock_process_function)

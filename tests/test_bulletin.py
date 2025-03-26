@@ -45,7 +45,6 @@ def test_bulletin_render(config,template,template_folder,expected,monkeypatch,mo
     section = Section(mock_process_function)
     bullet.add_section(section)
     rendered = bullet.render()
-    monkeypatch.chdir("tests")
 
     with open(os.path.join("expected",expected)) as f:
         expected_text = f.read()

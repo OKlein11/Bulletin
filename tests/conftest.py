@@ -2,7 +2,8 @@ import pytest
 import smtplib
 import os
 import feedparser
-
+import json
+import requests
 
 class MockSmtp:
 
@@ -36,6 +37,9 @@ def mock_get_smtp_server(monkeypatch):
     
     monkeypatch.setattr(smtplib,"SMTP",mock_smtp)
 
+@pytest.fixture(autouse=True)
+def change_directory(monkeypatch):
+    monkeypatch.chdir("tests")
 
 @pytest.fixture
 def mock_feedparser_parse(monkeypatch:pytest.MonkeyPatch):
@@ -47,8 +51,31 @@ def mock_feedparser_parse(monkeypatch:pytest.MonkeyPatch):
             return bytes(f.read(), encoding="utf-8")
         
 
-    monkeypatch.chdir("tests")
+
     monkeypatch.setattr(feedparser.http,"get",mock_feed_get)
 
 def mock_process_function(config):
     return {"test":"test"}
+
+
+class mock_request:
+    def __init__(self,url,headers):
+        self.name = url.split("//")[1].split(".")[0]
+
+    def json(self) -> dict:
+        with open(os.path.join("data",f"{self.name}.json")) as f:
+            return json.load(f)
+    
+    def content(self) -> str:
+        with open(os.path.join("data",f"{self.name}.txt")) as f:
+            return f.read()
+    @property
+    def status_code(self):
+        return 200
+        
+@pytest.fixture
+def mock_request_get(monkeypatch):
+    def mock_get(url,headers):
+        return mock_request(url,headers)
+    
+    monkeypatch.setattr(requests,"get",mock_get)
