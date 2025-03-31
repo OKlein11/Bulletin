@@ -25,13 +25,13 @@ class Bulletin:
         return self.sections
 
 
-    def render(self):
+    def render(self) -> str:
         renders = [section.render() for section in self.sections]
         template = get_template(self)
         return template.render(content = renders)
 
 
-    def send(self,recepient: str | Sequence[str],subject: str | None = None):
+    def send(self,recepient: str | Sequence[str],subject: str | None = None) -> None:
         text = self.render()
         subj = self.config["subject"]
         if subject is not None:

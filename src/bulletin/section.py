@@ -15,7 +15,7 @@ class Section:
                  config={},
                  template:str = None,
                  template_folder:str=DEFAULT_TEMPLATE_FOLDER,
-                 ):
+                 ) -> None:
         self.process_function = process_function
         self.config = config
         self.template_folder = template_folder
@@ -24,12 +24,12 @@ class Section:
 
 
     def _process(self
-                 ):
-        return self.process_function(self.config)
+                 ) -> any:
+        return self.process_function(self.config) 
 
 
 
-    def render(self):
+    def render(self) -> str:
         data = self._process()
 
         template = get_template(self)
@@ -41,12 +41,12 @@ class IndividualRSSFeed(Section):
     default_template = "individual_rss.html"
     def __init__(self,
                  url:str, 
-                 config={
+                 config: dict={
                      "items":5,
                      "since_last":False
                      }, 
                  template:str = None,
-                 template_folder:str = DEFAULT_TEMPLATE_FOLDER):
+                 template_folder:str = DEFAULT_TEMPLATE_FOLDER) -> None:
         conf = config
         conf["url"] = url
         super().__init__(self._process_rss_feed, 
@@ -57,7 +57,7 @@ class IndividualRSSFeed(Section):
 
 
     @staticmethod
-    def _process_rss_feed(config:dict):
+    def _process_rss_feed(config:dict) -> dict:
         parsed_feed: feedparser.FeedParserDict = feedparser.parse(config["url"])
         data = {}
         data["title"] = parsed_feed.feed.title
@@ -80,7 +80,7 @@ class RequestsGetSection(Section):
                  params:dict = {},
                  config={}, 
                  template = None, 
-                 template_folder = DEFAULT_TEMPLATE_FOLDER):
+                 template_folder = DEFAULT_TEMPLATE_FOLDER) -> None:
         config["url"] = url
         config["headers"] = headers
         config["return_type"] = return_type
@@ -108,7 +108,7 @@ class PlainTextSection(Section):
                  encoding:str="html", 
                  config={}, 
                  template = None, 
-                 template_folder = DEFAULT_TEMPLATE_FOLDER):
+                 template_folder = DEFAULT_TEMPLATE_FOLDER) -> None:
         config["text"] = text
         config["encoding"] = encoding
         super().__init__(

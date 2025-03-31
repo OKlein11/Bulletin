@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from typing import Sequence
 
 class EmailServer:
-    def __init__(self,auth_user:str,auth_password:str,server:str,port:int=587):
+    def __init__(self,auth_user:str,auth_password:str,server:str,port:int=587) -> None:
         self.server:smtplib.SMTP = smtplib.SMTP(server,port)
         self.sender:str = auth_user
         self.server.starttls()
@@ -14,7 +14,7 @@ class EmailServer:
     def __del__(self):
         self.server.quit()
 
-    def send(self,send_to: str | Sequence[str],subject:str,text:str):
+    def send(self,send_to: str | Sequence[str],subject:str,text:str) -> None:
         msg = MIMEMultipart()
         msg["Subject"] = subject
         msg["From"] = self.sender
