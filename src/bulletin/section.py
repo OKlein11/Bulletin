@@ -220,6 +220,39 @@ class IndividualRSSFeed(Section):
 
 
 class RequestsGetSection(Section):
+    """
+    A section class that pulls data from a website using a get call
+
+    Attributes
+    -----
+    default_template : str
+        The default template for this section, stored in Bulletin's files.
+
+        This value is set at a class level
+
+        For this class the default is 'section.html'
+    config : dict
+        Any config needed for the section
+    template_folder : str
+        The path relative to the current working directory where a non-default template is stored.
+
+        If no path is given, will return None
+    template : str, optional
+        The name of a template file within the template_folder directory. Will be used in place of the default template
+
+        This attribute will only exist if a template is given on initialization of the object
+
+    Methods
+    -------
+    render()
+        Processes according to the process_fuction, then renders the object into the given Jinja template
+
+
+    Default Template
+    -----
+        {{ data }}
+    """
+    
     def __init__(self,
                  url:str,
                  headers:str={},
@@ -228,6 +261,31 @@ class RequestsGetSection(Section):
                  config={}, 
                  template = None, 
                  template_folder = DEFAULT_TEMPLATE_FOLDER) -> None:
+        """
+        Parameters
+        -------
+        url : str 
+            The URL of the site to pull from
+        headers : dict, optional
+            Any headers to pass to the request
+        return_type : str, optional
+            What type to return as.
+
+            Allowed values: ["json","text"]
+
+            Default: "json"
+        params : dict
+            Any additional params to pass to the request
+        config : dict, optional
+            The configuration for the section.
+
+            Default: {}
+        template : str, optional
+            The name of a template file within the template_folder directory. Will be used in place of the class' default template
+        template_folder : str, optional
+            The path relative to the current working directory where a non-default template is stored.
+
+        """
         config["url"] = url
         config["headers"] = headers
         config["return_type"] = return_type
@@ -236,6 +294,21 @@ class RequestsGetSection(Section):
 
     @staticmethod
     def _process_request_get(config:dict) -> dict | str:
+        """
+        Runs a get request from the url assigned. Returns data either as processed json or plain text
+
+        Parameters
+        -----
+        config : dict
+            the configuration of the request
+        
+        Returns
+        -----
+        dict
+            Returns the value of the get request jsonified. determined by the config's "return_type" value
+        str
+            Returns the value of the get request as plain text. determined by the config's "return_type" value
+        """
         url = config["url"]
         req = requests.get(url, headers=config["headers"],params=config["params"])
         try:
@@ -249,6 +322,38 @@ class RequestsGetSection(Section):
 
     
 class PlainTextSection(Section):
+    """
+    A section class that renders plain text given
+
+    Attributes
+    -----
+    default_template : str
+        The default template for this section, stored in Bulletin's files.
+
+        This value is set at a class level
+
+        For this class the default is 'plain_text_section.html'
+    config : dict
+        Configuration for this section
+    template_folder : str
+        The path relative to the current working directory where a non-default template is stored.
+
+        If no path is given, will return None
+    template : str, optional
+        The name of a template file within the template_folder directory. Will be used in place of the default template
+
+        This attribute will only exist if a template is given on initialization of the object
+
+    Methods
+    -------
+    render()
+        Processes according to the process_fuction, then renders the object into the given Jinja template
+
+
+    Default Template
+    -----
+        {{ data }}
+    """
     default_template = "plain_text_section.html"
     def __init__(self, 
                  text:str,
@@ -256,6 +361,25 @@ class PlainTextSection(Section):
                  config={}, 
                  template = None, 
                  template_folder = DEFAULT_TEMPLATE_FOLDER) -> None:
+        """
+        Parameters
+        -------
+        text : str
+            The text to be rendered in the template
+        encoding : str, optional
+            The encoding of the text. Options are html and markdown. Default html
+
+            Markdown will be rendered according to the markdown syntax
+
+            html will be rendered as raw html
+        config : dict, optional
+            Any configuration.
+        template : str, optional
+            The name of a template file within the template_folder directory. Will be used in place of the class' default template
+        template_folder : str, optional
+            The path relative to the current working directory where a non-default template is stored.
+
+        """
         config["text"] = text
         config["encoding"] = encoding
         super().__init__(
@@ -266,6 +390,14 @@ class PlainTextSection(Section):
     
     @staticmethod
     def _process_plain_text(config) -> str:
+        """
+        Renders the config to a str to be passed to the render function
+
+        Parameters
+        -----
+        config : dict
+            The config required to render
+        """
         if config["encoding"] == "html":
             return config["text"]
         elif config["encoding"] == "markdown":
